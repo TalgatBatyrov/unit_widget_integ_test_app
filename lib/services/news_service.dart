@@ -7,7 +7,7 @@ class NewsService {
     10,
     (_) => Article(
       title: lorem(paragraphs: 1, words: 3),
-      content: lorem(paragraphs: 2, words: 100),
+      content: lorem(paragraphs: 1, words: 300),
     ),
   );
 
