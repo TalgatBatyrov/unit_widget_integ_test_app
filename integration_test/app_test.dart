@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:integration_test/integration_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:unit_widget_integ_test_app/blocs/news_cubit.dart';
-import 'package:unit_widget_integ_test_app/main.dart';
 import 'package:unit_widget_integ_test_app/models/article.dart';
 import 'package:unit_widget_integ_test_app/services/news_service.dart';
+import 'package:unit_widget_integ_test_app/view/article_page.dart';
 import 'package:unit_widget_integ_test_app/view/news_page.dart';
 
 class MockNewsServices extends Mock implements NewsService {}
 
 void main() {
+  // IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+
   late final MockNewsServices services;
 
   setUp(() {
@@ -29,15 +32,6 @@ void main() {
     );
   }
 
-  void arrangeNewsServiceReturns3ArticlesAfter2SecondWait() {
-    when(() => services.getArticles()).thenAnswer(
-      (_) async {
-        await Future.delayed(const Duration(seconds: 2));
-        return articlesFromService;
-      },
-    );
-  }
-
   Widget createWidgetUnderTest() {
     return MaterialApp(
       title: 'Flutter Demo',
@@ -53,47 +47,22 @@ void main() {
   }
 
   testWidgets(
-    'title is displayed',
+    'tapping on the first article excerpt open the article page where the full article content is displayed!!!',
     (widgetTester) async {
       arrangeNewsServiceReturns3Articles();
 
       await widgetTester.pumpWidget(createWidgetUnderTest());
 
-      expect(find.text('News'), findsOneWidget);
-    },
-  );
+      await widgetTester.pump();
 
-  testWidgets(
-    'loading indicator is displayed while waiting for articles',
-    (widgetTester) async {
-      arrangeNewsServiceReturns3ArticlesAfter2SecondWait();
-
-      await widgetTester.pumpWidget(createWidgetUnderTest());
-
-      await widgetTester.pump(const Duration(seconds: 1));
-
-      expect(find.byKey(const Key('news_loading_indicator')), findsOneWidget);
+      await widgetTester.tap(find.text('Test 1'));
 
       await widgetTester.pumpAndSettle();
+
+      expect(find.byType(NewsPage), findsNothing);
+      expect(find.byType(ArticlePage), findsOneWidget);
+      expect(find.text('Test 1'), findsOneWidget);
+      expect(find.text('Test 1 content'), findsOneWidget);
     },
   );
-
-  testWidgets('articles are displayed', (widgetTester) async {
-    arrangeNewsServiceReturns3Articles();
-
-    await widgetTester.pumpWidget(createWidgetUnderTest());
-
-    await widgetTester.pumpAndSettle();
-
-    expect(find.byType(ListTile), findsNWidgets(3));
-
-    // expect(find.text('Test 1'), findsOneWidget);
-    // expect(find.text('Test 2'), findsOneWidget);
-    // expect(find.text('Test 3'), findsOneWidget);
-
-    for (final article in articlesFromService) {
-      expect(find.text(article.title), findsOneWidget);
-      expect(find.text(article.content), findsOneWidget);
-    }
-  });
 }

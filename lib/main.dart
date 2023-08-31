@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:unit_widget_integ_test_app/blocs/news_cubit.dart';
 import 'package:unit_widget_integ_test_app/services/news_service.dart';
-import 'package:unit_widget_integ_test_app/view/home.dart';
+import 'package:unit_widget_integ_test_app/view/news_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
       ),
       home: BlocProvider(
         create: (_) => NewsCubit(NewsService()),
-        child: const Home(),
+        child: const NewsPage(),
       ),
     );
   }
