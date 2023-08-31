@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:unit_widget_integ_test_app/blocs/news_cubit.dart';
 import 'package:unit_widget_integ_test_app/blocs/news_state.dart';
+import 'package:unit_widget_integ_test_app/view/news_page.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -36,8 +37,19 @@ class _HomeState extends State<Home> {
               itemBuilder: (context, index) {
                 final article = state.articles[index];
                 return ListTile(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => NewsPage(article: article),
+                      ),
+                    );
+                  },
                   title: Text(article.title),
-                  subtitle: Text(article.content),
+                  subtitle: Text(
+                    article.content,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 3,
+                  ),
                 );
               },
             );
